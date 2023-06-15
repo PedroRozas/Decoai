@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "557710585478",
+    "project_id": "prueba-81643",
+    "storage_bucket": "prueba-81643.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:557710585478:android:dceb325719cbbccaf5ab07",
+        "android_client_info": {
+          "package_name": "com.example.deciaiv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "557710585478-buq87f8l07ujvd9mibbseqi0p6rp9sja.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3F4CDiyDLOJPpFdS5kGHmcFGoxpPVKK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "557710585478-buq87f8l07ujvd9mibbseqi0p6rp9sja.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
