@@ -17,8 +17,9 @@ class _CamaraState extends State<Camara> {
   List<File?> imgList = [null, null, null];
   var imgbytess;
   List<dynamic> listBytes = [null, null, null];
-
   int  _Current= 0;
+  List<List> resp = [[],[],[]];
+  String responseDescp = '';
 
   void _getFromCamera() async {
     final XFile? pickedFile = await ImagePicker().pickImage(
@@ -49,9 +50,6 @@ class _CamaraState extends State<Camara> {
       listBytes[_Current] = imgbytess;
     });
   }
-  List<List> resp = [[],[],[]];
-
-  String responseDescp = '';
 
   void _analizeImage(img) async {
     const url = "https://recomendaciones.cognitiveservices.azure.com/vision/v3.2/describe?maxCandidates=1&language=es&model-version=latest";

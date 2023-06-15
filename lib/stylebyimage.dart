@@ -18,13 +18,17 @@ class _DesignState extends State<Design> {
   String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
   Reference storageRef = FirebaseStorage.instance.ref();
 
-
+  String resp = '' ;
+  var jsonResp = null;
   File? imageFile;
   var imgbytess;
-  int  _Current= 0;
   var imageUrl=null;
+  String selectedType = 'Elige una opción';
+  String selectedStyle = 'Elige una opción';
+  List<String> dropdownTypes = ['Elige una opción', 'living room', 'bathroom', 'kitchen', 'bedroom'];
+  List<String> dropdownStyles = ['Elige una opción', 'industrial', 'Kinkfolk', 'minimalist','modern','viking','romantic','art deco','retro','Retro'];
   
-
+//Function to capture a photo from camera
   Future<void> _getFromCamera() async {
     final XFile? pickedFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
@@ -38,7 +42,7 @@ class _DesignState extends State<Design> {
      
     });
   }
-
+//function to get a photo from gallery
   void _getFromGalery() async {
     final XFile? pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
@@ -52,23 +56,22 @@ class _DesignState extends State<Design> {
 
     });
   }
-
+//upload image to firebase
   void analizar() async {
     Reference referenceDirImages= storageRef.child('images');
     Reference imagetoUpload = referenceDirImages.child(uniqueFileName);
+    SettableMetadata metadata = SettableMetadata(contentType: 'image/jpeg',);
     try {
-      await imagetoUpload.putFile(imageFile!);
-      String resp1 = await  (imagetoUpload).getDownloadURL();
+      await imagetoUpload.putFile(imageFile!, metadata);
+      String resp1 = await  imagetoUpload.getDownloadURL();
       setState(() {
+        String cleanedLink = resp1.replaceAll('https://', '');
         resp = resp1;
       });
     }
     catch (e) {};
+    print(resp);
 }
-  var resp;
-
-  var jsonResp = null;
-
   void _analizeImage(img) async {
     const url = "https://recomendaciones.cognitiveservices.azure.com/vision/v3.2/describe?maxCandidates=1&language=es&model-version=latest";
     final Uri uri = Uri
@@ -82,7 +85,7 @@ class _DesignState extends State<Design> {
       //var descp = jsonResponse['description']['captions'];
       print (jsonResponse);
       setState(() {
-        resp[_Current] = tags;
+        resp = tags;
         //responseDescp= descp[0]['text'];
       });
 
@@ -91,28 +94,25 @@ class _DesignState extends State<Design> {
     }
   }
 
-  String selectedType = 'Elige una opción';
-  String selectedStyle = 'Elige una opción';
-  List<String> dropdownTypes = ['Elige una opción', 'Sala de estar', 'Baño', 'Cocina', 'Habitación'];
-  List<String> dropdownStyles = ['Elige una opción', 'Industrial', 'Kinkfolk', 'Contemporáneo','Minimalista','Nórdico','Ecléctico','Romántico','Art Decó','Retro'];
 
-  void newStyle(img) async {
+
+  //Function to get a new style from an image
+  void newStyle(imgLink) async {
     const url = "https://stablediffusionapi.com/api/v5/interior";
     final Uri uri = Uri
         .parse(url);  // parse string
     var response = await http.post(uri,body:{
-      'key':'mxeFW4HnAALP0H6DEui3saKyE24dfYzEcBPDtX5KC0D2gPmHDCFWhVyxRLWX',
-      'init_image':img,
-      'prompt':'$selectedType con un nuevo estilo $selectedStyle',
+      'key':'9eFS96XvxH2Vwoa6MFYB34yfJbF8Ym0FfbdRZpaK6usdQhd6J6ysJwSoFpXs',
+      'init_image':"$imgLink",
+      'prompt':'$selectedType $selectedStyle',
       'steps':'50',
-      'guidance_scale':'7'}
+      'guidance_scale':'10'}
     );
     if (response.statusCode == 200) {
       var jsonResponse =
       convert.jsonDecode(response.body) as Map<String, dynamic>;
       var tags = jsonResponse['output'];
       //var descp = jsonResponse['description']['captions'];
-      print (jsonResponse['output'][0]);
       setState(() {
         jsonResp = jsonResponse;
         imageUrl = jsonResponse['output'][0];
@@ -125,7 +125,7 @@ class _DesignState extends State<Design> {
 
   }
 
-
+//main screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -209,9 +209,7 @@ class _DesignState extends State<Design> {
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
                   onPressed: (){
-
-                  newStyle(resp);
-
+                  newStyle(resp.toString());
                   },
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.deepPurple),
